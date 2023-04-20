@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
 using Microsoft.Spark.Hadoop.Conf;
 using Microsoft.Spark.Interop.Internal.Scala;
 using Microsoft.Spark.Interop.Ipc;
@@ -231,7 +232,7 @@ namespace Microsoft.Spark
             var values = new List<byte[]>();
             foreach (T obj in seq)
             {
-                formatter.Serialize(memoryStream, obj);
+                JsonSerializer.Serialize(memoryStream, obj);
                 values.Add(memoryStream.ToArray());
                 memoryStream.SetLength(0);
             }

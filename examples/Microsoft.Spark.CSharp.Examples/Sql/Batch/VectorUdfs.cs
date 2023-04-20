@@ -4,7 +4,6 @@
 
 using System;
 using Apache.Arrow;
-using Apache.Arrow.Types;
 using Microsoft.Spark.Sql;
 using Microsoft.Spark.Sql.Types;
 using StructType = Microsoft.Spark.Sql.Types.StructType;
@@ -77,7 +76,7 @@ namespace Microsoft.Spark.Examples.Sql.Batch
             return new RecordBatch(
                 new Schema.Builder()
                     .Field(ageField)
-                    .Field(f => f.Name("name_CharCount").DataType(Int32Type.Default))
+                    .Field(f => f.Name("name_CharCount").DataType(Apache.Arrow.Types.Int32Type.Default))
                     .Build(),
                 new IArrowArray[]
                 {

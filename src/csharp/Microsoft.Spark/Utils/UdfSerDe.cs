@@ -10,6 +10,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.Serialization;
+using ProtoBuf;
 
 namespace Microsoft.Spark.Utils
 {
@@ -22,10 +23,14 @@ namespace Microsoft.Spark.Utils
             new ConcurrentDictionary<TypeData, Type>();
 
         [Serializable]
+        [ProtoContract]
         internal sealed class TypeData : IEquatable<TypeData>
         {
+            [ProtoMember(1)]
             public string Name { get; set; }
+            [ProtoMember(2)]
             public string AssemblyName { get; set; }
+            [ProtoMember(3)]
             public string AssemblyFileName { get; set; }
 
             public override int GetHashCode()
@@ -51,10 +56,14 @@ namespace Microsoft.Spark.Utils
         }
 
         [Serializable]
+        [ProtoContract]
         internal sealed class UdfData
         {
+            [ProtoMember(1)]
             public TypeData TypeData { get; set; }
+            [ProtoMember(2)]
             public string MethodName { get; set; }
+            [ProtoMember(3)]
             public TargetData TargetData { get; set; }
 
             public override int GetHashCode()
@@ -78,9 +87,12 @@ namespace Microsoft.Spark.Utils
         }
 
         [Serializable]
+        [ProtoContract]
         internal sealed class TargetData
         {
+            [ProtoMember(1)]
             public TypeData TypeData { get; set; }
+            [ProtoMember(2)]
             public FieldData[] Fields { get; set; }
 
             public override int GetHashCode()
@@ -113,6 +125,7 @@ namespace Microsoft.Spark.Utils
         }
 
         [Serializable]
+        [ProtoContract]
         internal sealed class FieldData
         {
             public TypeData TypeData { get; set; }

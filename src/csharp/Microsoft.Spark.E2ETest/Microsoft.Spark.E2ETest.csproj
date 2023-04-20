@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Resources\*">
@@ -19,5 +19,11 @@
   <ItemGroup>
     <Compile Include="..\Microsoft.Spark.UnitTest\TestUtils\ArrowTestUtils.cs" />
     <Compile Include="..\Microsoft.Spark.UnitTest\TestUtils\TemporaryDirectory.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="coverlet.msbuild" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
 using System.Threading;
 using Microsoft.Spark.Interop;
 using Microsoft.Spark.Interop.Ipc;
@@ -223,8 +224,7 @@ namespace Microsoft.Spark
         /// <param name="stream">Stream to which the object is serialized</param>
         private void Dump(object value, Stream stream)
         {
-            var formatter = new BinaryFormatter();
-            formatter.Serialize(stream, value);
+            JsonSerializer.Serialize(stream, value);
         }
     }
 

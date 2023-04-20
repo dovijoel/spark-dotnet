@@ -5,6 +5,7 @@
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
 
 namespace Microsoft.Spark.Utils
 {
@@ -75,14 +76,13 @@ namespace Microsoft.Spark.Utils
             {
                 using FileStream fileStream = File.OpenRead(path);
                 var formatter = new BinaryFormatter();
-                return (Metadata)formatter.Deserialize(fileStream);
+                return JsonSerializer.Deserialize<Metadata>(fileStream);
             }
 
             internal void Serialize(string path)
             {
                 using FileStream fileStream = File.OpenWrite(path);
-                var formatter = new BinaryFormatter();
-                formatter.Serialize(fileStream, this);
+                JsonSerializer.Serialize(fileStream, this);
             }
 
             private bool Equals(Metadata other)

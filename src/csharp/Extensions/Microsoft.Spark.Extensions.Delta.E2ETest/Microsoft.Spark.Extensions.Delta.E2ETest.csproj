@@ -1,10 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Microsoft.Spark.E2ETest\Microsoft.Spark.E2ETest.csproj" />
     <ProjectReference Include="..\..\Microsoft.Spark\Microsoft.Spark.csproj" />
     <ProjectReference Include="..\Microsoft.Spark.Extensions.Delta\Microsoft.Spark.Extensions.Delta.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="coverlet.msbuild" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 </Project>
