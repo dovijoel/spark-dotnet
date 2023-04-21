@@ -373,3 +373,5 @@ hs_err_pid*
 
 # Mac dev
 .DS_Store
+/.metals
+/.vscode
