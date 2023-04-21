@@ -4,8 +4,8 @@
     <_PublishProject Include="$(RepoRoot)src\csharp\Microsoft.Spark.Worker\Microsoft.Spark.Worker.csproj" />
   </ItemGroup>
 
-  <ItemGroup>>
-    <_PublishTarget Include="WindowsCore" Framework="ne86.0" RuntimeId="win-x64" />
+  <ItemGroup>
+    <_PublishTarget Include="WindowsCore" Framework="net8.0" RuntimeId="win-x64" />
     <_PublishTarget Include="LinuxCore" Framework="net8.0" RuntimeId="linux-x64" />
     <_PublishTarget Include="MacOSCore" Framework="net8.0" RuntimeId="osx-x64" />
   </ItemGroup>
