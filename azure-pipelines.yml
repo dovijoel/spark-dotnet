@@ -10,46 +10,14 @@ trigger:
 variables:
   buildConfiguration: 'Release'
   _SignType: real
-  _TeamName: DotNetSpark
+  _TeamName: dovijoel
   MSBUILDSINGLELOADCONTEXT: 1
   ArtifactPath: '$(Build.ArtifactStagingDirectory)\Microsoft.Spark.Binaries'
-
-  backwardCompatibleRelease: '2.0.0'
-  forwardCompatibleRelease: '2.0.0'
-
-  backwardCompatibleTestOptions_Windows_3_0: ""
-  forwardCompatibleTestOptions_Windows_3_0: ""
-  backwardCompatibleTestOptions_Linux_3_0: ""
-  forwardCompatibleTestOptions_Linux_3_0: ""
-
-  backwardCompatibleTestOptions_Windows_3_1: ""
-  forwardCompatibleTestOptions_Windows_3_1: ""
-  backwardCompatibleTestOptions_Linux_3_1: ""
-  forwardCompatibleTestOptions_Linux_3_1: ""
-
-  backwardCompatibleTestOptions_Windows_3_2: ""
-  forwardCompatibleTestOptions_Windows_3_2: ""
-  backwardCompatibleTestOptions_Linux_3_2: ""
-  forwardCompatibleTestOptions_Linux_3_2: ""
-
-  # Skip all forward/backward compatibility tests since Spark 3.3 is not supported before this release.
-  backwardCompatibleTestOptions_Windows_3_3: "--filter FullyQualifiedName=NONE"
-  forwardCompatibleTestOptions_Windows_3_3: $(backwardCompatibleTestOptions_Windows_3_3)
-  backwardCompatibleTestOptions_Linux_3_3: $(backwardCompatibleTestOptions_Windows_3_3)
-  forwardCompatibleTestOptions_Linux_3_3: $(backwardCompatibleTestOptions_Windows_3_3)
 
   # Azure DevOps variables are transformed into environment variables, with these variables we
   # avoid the first time experience and telemetry to speed up the build.
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-
-# resources:
-#   repositories:
-#   - repository: forwardCompatibleRelease
-#     type: github
-#     endpoint: public
-#     name: dotnet/spark
-#     ref: refs/tags/v$(forwardCompatibleRelease)
 
 stages:
 - stage: Build
@@ -118,58 +86,9 @@ stages:
         artifactName:  Microsoft.Spark.Binaries
 
   - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-    - job: Sign
-      dependsOn:
-        - Build
-      displayName: Sign Artifacts
-      pool:
-        name: NetCore1ESPool-Internal
-        demands: ImageOverride -equals build.windows.10.amd64.vs2019
-
-      variables:
-        ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-          _OfficialBuildIdArgs: /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
-
-      steps:
-      - task: DownloadBuildArtifacts@0
-        displayName: Download Build Artifacts
-        inputs:
-          artifactName: Microsoft.Spark.Binaries
-          downloadPath: $(Build.ArtifactStagingDirectory)
-
-      - task: MicroBuildSigningPlugin@2
-        displayName: Install MicroBuild plugin
-        inputs:
-          signType: $(_SignType)
-          zipSources: false
-          feedSource: https://dnceng.pkgs.visualstudio.com/_packaging/MicroBuildToolset/nuget/v3/index.json
-        env:
-          TeamName: $(_TeamName)
-        condition: and(succeeded(), in(variables['_SignType'], 'real', 'test'), eq(variables['Agent.Os'], 'Windows_NT'))
-
-      - task: PowerShell@2
-        displayName: Sign artifacts
-        inputs:
-          filePath: eng\common\build.ps1
-          arguments: -restore -sign
-                     -c $(buildConfiguration)
-                     -ci
-                     $(_OfficialBuildIdArgs)
-                     /p:DotNetSignType=$(_SignType)
-                     /p:SparkPackagesDir=$(ArtifactPath)\BuildArtifacts\artifacts\packages
-                     /p:SparkWorkerPublishDir=$(ArtifactPath)\Microsoft.Spark.Worker
-
-      - task: PublishBuildArtifacts@1
-        inputs:
-          pathtoPublish: '$(ArtifactPath)'
-          artifactName:  Microsoft.Spark.Binaries
-
-  # The "Publish" stage is separated out from the "Sign" stage because we need to install powershell module
-  # to zip files correctly for macOS; installing the module is not allowed in NetCoreInternal-Pool.
-  - ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
     - job: Publish
       dependsOn:
-        - Sign
+        - Build
       displayName: Publish Artifacts
       pool: 
         vmImage: 'windows-2022'
@@ -207,126 +126,66 @@ stages:
 
 - template: azure-pipelines-e2e-tests-template.yml
   parameters:
-    backwardCompatibleRelease: $(backwardCompatibleRelease)
-    forwardCompatibleRelease: $(forwardCompatibleRelease)
     tests:
     - version: '3.0.0'
-      enableForwardCompatibleTests: false
-      enableBackwardCompatibleTests: false
       jobOptions:
       - pool: 'Windows'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_3_0)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_3_0)
       - pool: 'Linux'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_3_0)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_3_0)
     - version: '3.0.1'
-      enableForwardCompatibleTests: false
-      enableBackwardCompatibleTests: false
       jobOptions:
       - pool: 'Windows'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_3_0)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_3_0)
       - pool: 'Linux'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_3_0)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_3_0)
     - version: '3.0.2'
-      enableForwardCompatibleTests: false
-      enableBackwardCompatibleTests: false
       jobOptions:
       - pool: 'Windows'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_3_0)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_3_0)
       - pool: 'Linux'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_3_0)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_3_0)
     - version: '3.1.1'
       enableForwardCompatibleTests: false
       enableBackwardCompatibleTests: false
       jobOptions:
       - pool: 'Windows'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_3_1)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_3_1)
       - pool: 'Linux'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_3_1)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_3_1)
     - version: '3.1.2'
-      enableForwardCompatibleTests: false
-      enableBackwardCompatibleTests: false
       jobOptions:
       - pool: 'Windows'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_3_1)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_3_1)
       - pool: 'Linux'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_3_1)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_3_1)
     - version: '3.2.0'
-      enableForwardCompatibleTests: false
-      enableBackwardCompatibleTests: false
       jobOptions:
       - pool: 'Windows'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_3_2)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_3_2)
       - pool: 'Linux'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_3_2)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_3_2)
     - version: '3.2.1'
-      enableForwardCompatibleTests: false
-      enableBackwardCompatibleTests: false
       jobOptions:
       - pool: 'Windows'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_3_2)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_3_2)
       - pool: 'Linux'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_3_2)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_3_2)
     - version: '3.2.2'
-      enableForwardCompatibleTests: false
-      enableBackwardCompatibleTests: false
       jobOptions:
       - pool: 'Windows'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_3_2)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_3_2)
       - pool: 'Linux'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_3_2)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_3_2)
     - version: '3.2.3'
-      enableForwardCompatibleTests: false
-      enableBackwardCompatibleTests: false
       jobOptions:
       - pool: 'Windows'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_3_2)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_3_2)
       - pool: 'Linux'
         testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_3_2)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_3_2)
       - version: '3.3.0'
-        enableForwardCompatibleTests: false
-        enableBackwardCompatibleTests: false
         jobOptions:
         - pool: 'Windows'
           testOptions: ""
-          backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_3_3)
-          forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_3_3)
         - pool: 'Linux'
           testOptions: ""
-          backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_3_3)
-          forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_3_3)
