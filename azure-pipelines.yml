@@ -16,11 +16,6 @@ variables:
   backwardCompatibleRelease: '2.0.0'
   forwardCompatibleRelease: '2.0.0'
 
-  backwardCompatibleTestOptions_Windows_2_4: ""
-  forwardCompatibleTestOptions_Windows_2_4: ""
-  backwardCompatibleTestOptions_Linux_2_4: ""
-  forwardCompatibleTestOptions_Linux_2_4: ""
-
   backwardCompatibleTestOptions_Windows_3_0: ""
   forwardCompatibleTestOptions_Windows_3_0: ""
   backwardCompatibleTestOptions_Linux_3_0: ""
