@@ -35,6 +35,7 @@ stages:
     - task: UseDotNet@2
       displayName: 'Use .NET 8 sdk'
       inputs:
+        includePreviewVersions: true
         packageType: sdk
         version: 8.x
         installationPath: $(Agent.ToolsDirectory)/dotnet
@@ -107,10 +108,11 @@ stages:
     - task: UseDotNet@2
       displayName: 'Use .NET 8 sdk'
       inputs:
+        includePreviewVersions: true
         packageType: sdk
         version: 8.x
         installationPath: $(Agent.ToolsDirectory)/dotnet
-        
+
     # The following module needs to be installed to zip files correctly for macOS.
     - powershell: Install-Module -Name Microsoft.PowerShell.Archive -Scope CurrentUser -Force -AllowClobber -Verbose -MinimumVersion 1.2.5
       displayName: Install Microsoft.PowerShell.Archive

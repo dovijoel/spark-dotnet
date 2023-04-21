@@ -53,6 +53,7 @@ stages:
         - task: UseDotNet@2
           displayName: 'Use .NET 8 sdk'
           inputs:
+            includePreviewVersions: true
             packageType: sdk
             version: 8.x
             installationPath: $(Agent.ToolsDirectory)/dotnet
