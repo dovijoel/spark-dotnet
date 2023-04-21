@@ -17,11 +17,9 @@ stages:
         ${{ else }}:
           pool:
             ${{ if or(eq(variables['System.TeamProject'], 'public'), in(variables['Build.Reason'], 'PullRequest')) }}:
-              name: NetCore-Public
-              demands: ImageOverride -equals Build.Ubuntu.1804.Amd64.Open
+              vmImage: 'ubuntu-20.04'
             ${{ if and(ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
-              name: 'Azure Pipelines'
-              demands: ImageOverride -equals Build.Ubuntu.1804.Amd64
+              vmImage: 'ubuntu-20.04'
 
         steps:
         - task: PowerShell@2
@@ -122,7 +120,7 @@ stages:
             command: test
             projects: '**/Microsoft.Spark*.E2ETest/*.csproj'
             arguments: '--configuration $(buildConfiguration) ${{ option.testOptions }}'
-            workingDirectory: $(Build.SourcesDirectory)$(PATH_SEPARATOR)dotnet-spark
+            workingDirectory: $(Build.SourcesDirectory)
           env:
             HADOOP_HOME: $(Build.BinariesDirectory)$(PATH_SEPARATOR)hadoop
             SPARK_HOME: $(Build.BinariesDirectory)$(PATH_SEPARATOR)spark-${{ test.version }}-bin-hadoop2.7
