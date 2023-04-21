@@ -26,11 +26,16 @@ variables:
   backwardCompatibleTestOptions_Linux_3_1: ""
   forwardCompatibleTestOptions_Linux_3_1: ""
 
-  # Skip all forward/backward compatibility tests since Spark 3.2 is not supported before this release.
-  backwardCompatibleTestOptions_Windows_3_2: "--filter FullyQualifiedName=NONE"
-  forwardCompatibleTestOptions_Windows_3_2: $(backwardCompatibleTestOptions_Windows_3_2)
-  backwardCompatibleTestOptions_Linux_3_2: $(backwardCompatibleTestOptions_Windows_3_2)
-  forwardCompatibleTestOptions_Linux_3_2: $(backwardCompatibleTestOptions_Windows_3_2)
+  backwardCompatibleTestOptions_Windows_3_2: ""
+  forwardCompatibleTestOptions_Windows_3_2: ""
+  backwardCompatibleTestOptions_Linux_3_2: ""
+  forwardCompatibleTestOptions_Linux_3_2: ""
+
+  # Skip all forward/backward compatibility tests since Spark 3.3 is not supported before this release.
+  backwardCompatibleTestOptions_Windows_3_3: "--filter FullyQualifiedName=NONE"
+  forwardCompatibleTestOptions_Windows_3_3: $(backwardCompatibleTestOptions_Windows_3_3)
+  backwardCompatibleTestOptions_Linux_3_3: $(backwardCompatibleTestOptions_Windows_3_3)
+  forwardCompatibleTestOptions_Linux_3_3: $(backwardCompatibleTestOptions_Windows_3_3)
 
   # Azure DevOps variables are transformed into environment variables, with these variables we
   # avoid the first time experience and telemetry to speed up the build.
@@ -204,102 +209,6 @@ stages:
     backwardCompatibleRelease: $(backwardCompatibleRelease)
     forwardCompatibleRelease: $(forwardCompatibleRelease)
     tests:
-    - version: '2.4.0'
-      enableForwardCompatibleTests: false
-      enableBackwardCompatibleTests: false
-      jobOptions:
-      - pool: 'Windows'
-        testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_2_4)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_2_4)
-      - pool: 'Linux'
-        testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_2_4)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_2_4)
-    - version: '2.4.1'
-      enableForwardCompatibleTests: false
-      enableBackwardCompatibleTests: false
-      jobOptions:
-      - pool: 'Windows'
-        testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_2_4)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_2_4)
-      - pool: 'Linux'
-        testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_2_4)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_2_4)
-    - version: '2.4.3'
-      enableForwardCompatibleTests: false
-      enableBackwardCompatibleTests: false
-      jobOptions:
-      - pool: 'Windows'
-        testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_2_4)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_2_4)
-      - pool: 'Linux'
-        testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_2_4)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_2_4)
-    - version: '2.4.4'
-      enableForwardCompatibleTests: false
-      enableBackwardCompatibleTests: false
-      jobOptions:
-      - pool: 'Windows'
-        testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_2_4)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_2_4)
-      - pool: 'Linux'
-        testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_2_4)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_2_4)
-    - version: '2.4.5'
-      enableForwardCompatibleTests: false
-      enableBackwardCompatibleTests: false
-      jobOptions:
-      - pool: 'Windows'
-        testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_2_4)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_2_4)
-      - pool: 'Linux'
-        testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_2_4)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_2_4)
-    - version: '2.4.6'
-      enableForwardCompatibleTests: false
-      enableBackwardCompatibleTests: false
-      jobOptions:
-      - pool: 'Windows'
-        testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_2_4)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_2_4)
-      - pool: 'Linux'
-        testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_2_4)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_2_4)
-    - version: '2.4.7'
-      enableForwardCompatibleTests: false
-      enableBackwardCompatibleTests: false
-      jobOptions:
-      - pool: 'Windows'
-        testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_2_4)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_2_4)
-      - pool: 'Linux'
-        testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_2_4)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_2_4)
-    - version: '2.4.8'
-      enableForwardCompatibleTests: false
-      enableBackwardCompatibleTests: false
-      jobOptions:
-      - pool: 'Windows'
-        testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_2_4)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_2_4)
-      - pool: 'Linux'
-        testOptions: ""
-        backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_2_4)
-        forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_2_4)
     - version: '3.0.0'
       enableForwardCompatibleTests: false
       enableBackwardCompatibleTests: false
@@ -408,3 +317,15 @@ stages:
         testOptions: ""
         backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_3_2)
         forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_3_2)
+      - version: '3.3.0'
+        enableForwardCompatibleTests: false
+        enableBackwardCompatibleTests: false
+        jobOptions:
+        - pool: 'Windows'
+          testOptions: ""
+          backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Windows_3_3)
+          forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Windows_3_3)
+        - pool: 'Linux'
+          testOptions: ""
+          backwardCompatibleTestOptions: $(backwardCompatibleTestOptions_Linux_3_3)
+          forwardCompatibleTestOptions: $(forwardCompatibleTestOptions_Linux_3_3)
