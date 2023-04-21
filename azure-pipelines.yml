@@ -5,6 +5,7 @@ trigger:
   branches:
     include:
     - main
+    - spark-3.4.0
 
 variables:
   buildConfiguration: 'Release'
@@ -42,13 +43,13 @@ variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
 
-resources:
-  repositories:
-  - repository: forwardCompatibleRelease
-    type: github
-    endpoint: public
-    name: dotnet/spark
-    ref: refs/tags/v$(forwardCompatibleRelease)
+# resources:
+#   repositories:
+#   - repository: forwardCompatibleRelease
+#     type: github
+#     endpoint: public
+#     name: dotnet/spark
+#     ref: refs/tags/v$(forwardCompatibleRelease)
 
 stages:
 - stage: Build

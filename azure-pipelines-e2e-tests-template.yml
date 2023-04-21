@@ -2,6 +2,12 @@ parameters:
 - name: tests
   type: object
   default: {}
+- name: backwardCompatibleRelease
+  type: string
+  default: ''
+- name: forwardCompatibleRelease
+  type: string
+  default: ''
 
 stages:
 - ${{ each test in parameters.tests }}:
