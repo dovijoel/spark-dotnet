@@ -5,6 +5,7 @@ trigger:
   branches:
     include:
     - main
+    - spark-3.4.0
 
 variables:
   buildConfiguration: 'Release'
