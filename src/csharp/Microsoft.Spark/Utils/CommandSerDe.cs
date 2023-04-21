@@ -12,9 +12,9 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.Json;
+using MessagePack;
 using Microsoft.Spark.Interop.Ipc;
 using Microsoft.Spark.Sql;
-using ProtoBuf;
 
 namespace Microsoft.Spark.Utils
 {
@@ -50,13 +50,11 @@ namespace Microsoft.Spark.Utils
         ///         * <see cref="RDD.WorkerFunction.WorkerFuncChainHelper"/>
         /// </summary>
         [Serializable]
-        [ProtoContract]
         private sealed class UdfWrapperNode
         {
             /// <summary>
             /// Type name of the UDF wrapper.
             /// </summary>
-            [ProtoMember(1)]
             internal string TypeName { get; set; }
 
             /// <summary>
@@ -64,13 +62,11 @@ namespace Microsoft.Spark.Utils
             /// Note that there can be up to two children and if the child is an UDF,
             /// this will be set to one.
             /// </summary>
-            [ProtoMember(2)]
             internal int NumChildren { get; set; }
 
             /// <summary>
             /// True if the child is an UDF.
             /// </summary>
-            [ProtoMember(3)]
             internal bool HasUdf { get; set; }
         }
 
@@ -94,19 +90,16 @@ namespace Microsoft.Spark.Utils
         /// 
         /// </summary>
         [Serializable]
-        [ProtoContract]
         private sealed class UdfWrapperData
         {
             /// <summary>
             /// Flattened UDF wrapper nodes.
             /// </summary>
-            [ProtoMember(1)]
             internal UdfWrapperNode[] UdfWrapperNodes { get; set; }
 
             /// <summary>
             /// Serialized UDF data.
             /// </summary>
-            [ProtoMember(2)]
             internal UdfSerDe.UdfData[] Udfs { get; set; }
         }
 
@@ -172,7 +165,7 @@ namespace Microsoft.Spark.Utils
 
             using (var stream = new MemoryStream())
             {
-                Serializer.Serialize(stream, udfWrapperData);
+                MessagePackSerializer.Typeless.Serialize(stream, udfWrapperData);
                 byte[] udfBytes = stream.ToArray();
                 byte[] udfBytesLengthAsBytes = BitConverter.GetBytes(udfBytes.Length);
                 Array.Reverse(udfBytesLengthAsBytes);
@@ -302,7 +295,7 @@ namespace Microsoft.Spark.Utils
 
             var ms = new MemoryStream(serializedCommand, false);
 
-            return Serializer.Deserialize<UdfWrapperData>(ms);
+            return MessagePackSerializer.Typeless.Deserialize(ms) as UdfWrapperData;
         }
 
         internal static T Deserialize<T>(

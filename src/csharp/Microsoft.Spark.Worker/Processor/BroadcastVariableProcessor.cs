@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
+using MessagePack;
 using Microsoft.Spark.Interop.Ipc;
 using Microsoft.Spark.Network;
 
@@ -62,10 +63,7 @@ namespace Microsoft.Spark.Worker.Processor
                                 $"server {readBid} is different from the Broadcast Id received " +
                                 $"from the payload {bid}.");
                         }
-#pragma warning disable SYSLIB0011 // Type or member is obsolete
-                        // TODO: Replace BinaryFormatter with a new, secure serializer.
-                        object value = formatter.Deserialize(socket.InputStream);
-#pragma warning restore SYSLIB0011 // Type or member is obsolete
+                        object value = MessagePackSerializer.Typeless.Deserialize(socket.InputStream);
                         BroadcastRegistry.Add(bid, value);
                     }
                     else
@@ -73,10 +71,7 @@ namespace Microsoft.Spark.Worker.Processor
                         string path = SerDe.ReadString(stream);
                         using FileStream fStream = 
                             File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-#pragma warning disable SYSLIB0011 // Type or member is obsolete
-                        // TODO: Replace BinaryFormatter with a new, secure serializer.
-                        object value = formatter.Deserialize(fStream);
-#pragma warning restore SYSLIB0011 // Type or member is obsolete
+                        object value = MessagePackSerializer.Typeless.Deserialize(fStream);
                         BroadcastRegistry.Add(bid, value);
                     }
                 }

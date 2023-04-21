@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
+using MessagePack;
 using Microsoft.Spark.Interop.Ipc;
 using Microsoft.Spark.Sql;
 using Microsoft.Spark.Utils;
@@ -73,7 +74,7 @@ namespace Microsoft.Spark.RDD
         {
             public object Deserialize(Stream stream, int length)
             {
-                return JsonSerializer.Deserialize<object>(stream);
+                return MessagePackSerializer.Typeless.Deserialize(stream);
             }
         }
 

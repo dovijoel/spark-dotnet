@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
+using MessagePack;
 using Microsoft.Spark.Utils;
 using Xunit;
 
@@ -18,6 +19,7 @@ namespace Microsoft.Spark.UnitTest
         private class TestClass
         {
             private readonly string _str;
+            public TestClass() { }
 
             public TestClass(string s)
             {
@@ -149,16 +151,13 @@ namespace Microsoft.Spark.UnitTest
             return Deserialize(Serialize(udf));
         }
 
-#pragma warning disable SYSLIB0011 // Type or member is obsolete
-        // TODO: Replace BinaryFormatter with a new, secure serializer.
         private byte[] Serialize(Delegate udf)
         {
             UdfSerDe.UdfData udfData = UdfSerDe.Serialize(udf);
 
             using (var ms = new MemoryStream())
             {
-                var bf = new BinaryFormatter();
-                bf.Serialize(ms, udfData);
+                MessagePackSerializer.Typeless.Serialize(ms, udfData);
                 return ms.ToArray();
             }
         }
@@ -168,10 +167,9 @@ namespace Microsoft.Spark.UnitTest
             using (var ms = new MemoryStream(serializedUdf, false))
             {
                 var bf = new BinaryFormatter();
-                UdfSerDe.UdfData udfData = (UdfSerDe.UdfData)bf.Deserialize(ms);
+                UdfSerDe.UdfData udfData = MessagePackSerializer.Typeless.Deserialize(ms) as UdfSerDe.UdfData;
                 return UdfSerDe.Deserialize(udfData);
             }
         }
-#pragma warning restore
     }
 }

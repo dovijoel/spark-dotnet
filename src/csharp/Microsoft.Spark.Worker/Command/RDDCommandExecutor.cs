@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using MessagePack;
 using Microsoft.Spark.Interop.Ipc;
 using Microsoft.Spark.Utils;
 
@@ -19,8 +20,6 @@ namespace Microsoft.Spark.Worker.Command
     {
         [ThreadStatic]
         private static MemoryStream s_writeOutputStream;
-        [ThreadStatic]
-        private static BinaryFormatter s_binaryFormatter;
 
         /// <summary>
         /// Executes the commands on the input data read from input stream
@@ -111,11 +110,7 @@ namespace Microsoft.Spark.Worker.Command
             switch (serializerMode)
             {
                 case CommandSerDe.SerializedMode.Byte:
-                    BinaryFormatter formatter = s_binaryFormatter ??= new BinaryFormatter();
-#pragma warning disable SYSLIB0011 // Type or member is obsolete
-                    // TODO: Replace BinaryFormatter with a new, secure serializer.
-                    formatter.Serialize(stream, message);
-#pragma warning restore SYSLIB0011 // Type or member is obsolete
+                    MessagePackSerializer.Typeless.Serialize(stream, message);
                     break;
                 case CommandSerDe.SerializedMode.None:
                 case CommandSerDe.SerializedMode.String:

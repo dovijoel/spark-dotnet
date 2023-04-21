@@ -29,10 +29,10 @@
 
   <ItemGroup>
     <PackageReference Include="Apache.Arrow" Version="11.0.0" />
+    <PackageReference Include="MessagePack" Version="2.5.108" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Data.Analysis" Version="0.21.0-preview.22621.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="protobuf-net" Version="3.0.101" />
     <PackageReference Include="Razorvine.Pyrolite" Version="4.31.0" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
   </ItemGroup>
