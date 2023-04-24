@@ -30,7 +30,7 @@ namespace Microsoft.Spark
         private readonly JvmObjectReference _jvmObject;
 
         private readonly long _bid;
-
+        internal Broadcast() { }
         internal Broadcast(SparkContext sc, T value)
         {
             _path = CreateTempFilePath(sc.GetConf());

@@ -38,12 +38,12 @@ RUN mvn clean package -f src/scala/pom.xml && \
     mvn clean package -f benchmark/scala/pom.xml
 
 RUN mkdir Jars && cp src/scala/**/target/*.jar Jars
-RUN ./eng/common/build.sh -restore -publish \
-                -c Release \
-                -ci \
-                /p:PublishSparkWorker=true \
-                /p:SparkWorkerPublishDir=/spark-dotnet/Microsoft.Spark.Worker \
-                /p:SparkWorkerPackageOutputDir=/spark-dotnet/Microsoft.Spark.Binaries
+RUN ln -s $(which pwsh) /usr/bin/powershell
+RUN dotnet publish src/csharp/Microsoft.Spark.sln --configuration Release \
+                --framework net8.0 \
+                -p:PublishSparkWorker=true \
+                -p:SparkWorkerPublishDir=/spark-dotnet/Microsoft.Spark.Worker \
+                -p:SparkWorkerPackageOutputDir=/spark-dotnet/Microsoft.Spark.Binaries
 
 # Download spark binaries
 RUN curl -k -L -o spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz && \
@@ -58,7 +58,7 @@ WORKDIR /spark-dotnet/
 
 ENV SPARK_HOME=/spark
 ENV HADOOP_HOME=/spark
-ENV DOTNET_WORKER_DIR=/spark-dotnet/
+ENV DOTNET_WORKER_DIR=/spark-dotnet/artifacts/bin/Microsoft.Spark.Worker/Release/net8.0
 
 # start container running the tests
 CMD dotnet test src/csharp/Microsoft.Spark.sln --logger:"trx;LogFilePrefix=${SPARK_VERSION}-${HADOOP_VERSION}" --results-directory /spark-dotnet/src/csharp/test-results/

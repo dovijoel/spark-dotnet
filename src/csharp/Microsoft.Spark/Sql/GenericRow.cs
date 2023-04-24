@@ -21,7 +21,11 @@ namespace Microsoft.Spark.Sql
         {
             Values = values;           
         }
-       
+
+        public GenericRow()
+        {
+        }
+
         /// <summary>
         /// Values representing this row.
         /// </summary>

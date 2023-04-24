@@ -11,6 +11,7 @@ namespace Microsoft.Spark.E2ETest.ExternalLibrary
     {
         private string _s;
 
+        public ExternalClass() { }
         public ExternalClass(string s)
         {
             _s = s;
