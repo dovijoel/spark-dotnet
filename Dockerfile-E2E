@@ -1,0 +1,64 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0-preview-jammy
+
+ARG SPARK_VERSION
+ARG HADOOP_VERSION
+ARG BRANCH=master
+ENV SPARK_VERSION=${SPARK_VERSION}
+ENV HADOOP_VERSION=${HADOOP_VERSION}
+# Install Maven for Linux agent
+RUN wget https://dlcdn.apache.org/maven/maven-3/3.9.1/binaries/apache-maven-3.9.1-bin.tar.gz && \
+    tar -xvf apache-maven-3.9.1-bin.tar.gz && \ 
+    cp -r apache-maven-3.9.1 /opt
+
+ENV PATH /opt/apache-maven-3.9.1/bin:$PATH
+
+# Install OpenJDK-8
+RUN apt-get update && \
+    apt-get install -y openjdk-8-jdk && \
+    apt-get clean;
+    
+# Fix certificate issues
+RUN apt-get update && \
+    apt-get install ca-certificates-java && \
+    apt-get clean && \
+    update-ca-certificates -f;
+
+# Setup JAVA_HOME -- useful for docker commandline
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
+RUN export JAVA_HOME
+
+
+# build jars
+RUN cd / && \
+    git clone https://github.com/dovijoel/spark-dotnet.git -b ${BRANCH}
+
+WORKDIR /spark-dotnet/
+
+RUN mvn clean package -f src/scala/pom.xml && \
+    mvn clean package -f benchmark/scala/pom.xml
+
+RUN mkdir Jars && cp src/scala/**/target/*.jar Jars
+RUN ./eng/common/build.sh -restore -publish \
+                -c Release \
+                -ci \
+                /p:PublishSparkWorker=true \
+                /p:SparkWorkerPublishDir=/spark-dotnet/Microsoft.Spark.Worker \
+                /p:SparkWorkerPackageOutputDir=/spark-dotnet/Microsoft.Spark.Binaries
+
+# Download spark binaries
+RUN curl -k -L -o spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz && \
+    tar xzvf spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz && \
+    mv spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} /spark && \
+    rm spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz
+
+# add project files
+# ADD ./ /spark-dotnet/
+
+WORKDIR /spark-dotnet/
+
+ENV SPARK_HOME=/spark
+ENV HADOOP_HOME=/spark
+ENV DOTNET_WORKER_DIR=/spark-dotnet/
+
+# start container running the tests
+CMD dotnet test src/csharp/Microsoft.Spark.sln --logger:"trx;LogFilePrefix=${SPARK_VERSION}-${HADOOP_VERSION}" --results-directory /spark-dotnet/src/csharp/test-results/
