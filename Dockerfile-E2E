@@ -27,7 +27,6 @@ RUN apt-get update && \
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 RUN export JAVA_HOME
 
-
 # build jars
 RUN cd / && \
     git clone https://github.com/dovijoel/spark-dotnet.git -b ${BRANCH}
@@ -39,6 +38,7 @@ RUN mvn clean package -f src/scala/pom.xml && \
 
 RUN mkdir Jars && cp src/scala/**/target/*.jar Jars
 RUN ln -s $(which pwsh) /usr/bin/powershell
+RUN git pull
 RUN dotnet publish src/csharp/Microsoft.Spark.sln --configuration Release \
                 --framework net8.0 \
                 -p:PublishSparkWorker=true \

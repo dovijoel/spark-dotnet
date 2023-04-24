@@ -18,7 +18,7 @@ namespace Microsoft.Spark.Interop.Ipc
     {
         private static readonly ILoggerService s_logger =
             LoggerServiceFactory.GetLogger(typeof(JvmObjectId));
-
+        internal JvmObjectId() { }
         /// <summary>
         /// Constructor for JvmObjectId class.
         /// </summary>
@@ -126,7 +126,7 @@ namespace Microsoft.Spark.Interop.Ipc
         /// The time when this reference was created.
         /// </summary>
         private readonly DateTime _creationTime;
-
+        internal JvmObjectReference() { }
         /// <summary>
         /// Constructor for the JvmObjectReference class.
         /// </summary>
